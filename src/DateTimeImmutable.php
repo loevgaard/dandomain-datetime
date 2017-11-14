@@ -39,7 +39,7 @@ class DateTimeImmutable extends \DateTimeImmutable {
      * @param \DateTimeZone $timezone
      * @return DateTimeImmutable
      */
-    public static function createFromFormat($format, $time, \DateTimeZone $timezone = null)
+    public static function createFromFormat($format, $time, $timezone = null)
     {
         if($timezone !== null) {
             throw new \InvalidArgumentException('Do not pass time zone as an argument');
@@ -53,14 +53,14 @@ class DateTimeImmutable extends \DateTimeImmutable {
      * @param \DateTime $dateTime
      * @return DateTimeImmutable
      */
-    public static function createFromMutable(\DateTime $dateTime) : DateTimeImmutable
+    public static function createFromMutable($dateTime) : DateTimeImmutable
     {
-        $dt = parent::createFromMutable($dateTime);
-        return static::instance($dt);
+        $dt = static::createFromMutable($dateTime);
+        return $dt->setTimezone(static::defaultTimeZone());
     }
 
     /**
-     * @param $timestamp
+     * @param int|string $timestamp
      * @return DateTimeImmutable
      */
     public static function createFromTimestamp($timestamp) : DateTimeImmutable
@@ -68,6 +68,19 @@ class DateTimeImmutable extends \DateTimeImmutable {
         $dateTime = new \DateTime('@'.$timestamp);
         $dateTime->setTimezone(static::defaultTimeZone());
         return static::instance($dateTime);
+    }
+
+    public static function createFromJson(string $json) : DateTimeImmutable
+    {
+        preg_match('/([0-9]+)\+/', $json, $matches);
+        if(!isset($matches[1])) {
+            throw new \InvalidArgumentException('$json is not a valid JSON date. Input: ' . $json);
+        }
+
+        // remove the last three digits since the json date is given in milliseconds
+        $timestamp = substr($matches[1], 0, -3);
+
+        return static::createFromTimestamp($timestamp);
     }
 
     /**
