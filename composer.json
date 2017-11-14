@@ -1,0 +1,48 @@
+{
+    "name": "loevgaard/dandomain-datetime",
+    "type": "library",
+    "description": "An extension of the DateTimeImmutable for use with Dandomain",
+    "keywords": [
+        "loevgaard",
+        "dandomain-datetime"
+    ],
+    "homepage": "https://github.com/loevgaard/dandomain-datetime",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joachim Loevgaard",
+            "email": "joachim@loevgaard.dk",
+            "homepage": "https://github.com/loevgaard"
+        }
+    ],
+    "require": {
+        "php" : "~7.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.0",
+        "phpunit/phpunit" : "~5.5||~6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Loevgaard\\DandomainDateTime\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Loevgaard\\DandomainDateTime\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "check-style": "./vendor/bin/php-cs-fixer fix --verbose --dry-run",
+        "fix-style": "./vendor/bin/php-cs-fixer fix --verbose"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
