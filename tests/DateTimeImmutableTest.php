@@ -12,12 +12,6 @@ class DateTimeImmutableTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testTimeZoneExceptionOnInstantiation()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        new DateTimeImmutable('now', new \DateTimeZone('Europe/Amsterdam'));
-    }
-
     public function testTimestampExceptionOnInstantiation()
     {
         $this->expectException(\InvalidArgumentException::class);
