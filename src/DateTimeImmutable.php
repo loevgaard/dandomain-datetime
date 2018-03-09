@@ -22,7 +22,7 @@ class DateTimeImmutable extends \DateTimeImmutable
      *
      * @return static
      */
-    public static function instance(\DateTimeInterface $dt)
+    public static function instance(\DateTimeInterface $dt) : DateTimeImmutable
     {
         if ($dt instanceof static) {
             return clone $dt;
@@ -37,7 +37,7 @@ class DateTimeImmutable extends \DateTimeImmutable
      * @param \DateTimeZone $timezone
      * @return DateTimeImmutable
      */
-    public static function createFromFormat($format, $time, $timezone = null)
+    public static function createFromFormat($format, $time, $timezone = null) : DateTimeImmutable
     {
         if ($timezone !== null) {
             throw new \InvalidArgumentException('Do not pass time zone as an argument');
