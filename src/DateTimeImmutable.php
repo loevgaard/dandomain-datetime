@@ -1,7 +1,11 @@
 <?php
 namespace Loevgaard\DandomainDateTime;
 
+use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
+use Exception;
+use InvalidArgumentException;
 
 /**
  * This class represents a date time in Dandomain where the time zone is always Europe/Copenhagen
@@ -11,18 +15,16 @@ class DateTimeImmutable extends \DateTimeImmutable
     public function __construct($time = 'now')
     {
         if (strpos($time, '@') !== false) {
-            throw new \InvalidArgumentException('Use DateTimeImmutable::createFromTimestamp instead');
+            throw new InvalidArgumentException('Use DateTimeImmutable::createFromTimestamp instead');
         }
 
         parent::__construct($time, static::timeZone());
     }
 
     /**
-     * @param \DateTimeInterface $dt
-     *
-     * @return static
+     * @throws Exception
      */
-    public static function instance(\DateTimeInterface $dt) : DateTimeImmutable
+    public static function instance(DateTimeInterface $dt) : DateTimeImmutable
     {
         if ($dt instanceof static) {
             return clone $dt;
@@ -32,15 +34,12 @@ class DateTimeImmutable extends \DateTimeImmutable
     }
 
     /**
-     * @param string $format
-     * @param string $time
-     * @param \DateTimeZone $timezone
-     * @return DateTimeImmutable
+     * @throws Exception
      */
     public static function createFromFormat($format, $time, $timezone = null) : DateTimeImmutable
     {
         if ($timezone !== null) {
-            throw new \InvalidArgumentException('Do not pass time zone as an argument');
+            throw new InvalidArgumentException('Do not pass time zone as an argument');
         }
 
         $dt = parent::createFromFormat($format, $time, static::timeZone());
@@ -48,7 +47,7 @@ class DateTimeImmutable extends \DateTimeImmutable
     }
 
     /**
-     * @param \DateTime $dateTime
+     * @param DateTime $dateTime
      * @return DateTimeImmutable
      */
     public static function createFromMutable($dateTime) : DateTimeImmutable
@@ -58,21 +57,27 @@ class DateTimeImmutable extends \DateTimeImmutable
     }
 
     /**
-     * @param int|string $timestamp
-     * @return DateTimeImmutable
+     * @throws Exception
      */
     public static function createFromTimestamp($timestamp) : DateTimeImmutable
     {
-        $dateTime = new \DateTime('@'.$timestamp);
+        if (is_string($timestamp) && ($pos = strpos($timestamp, '.')) !== false) {
+            $timestamp = substr($timestamp, 0, $pos);
+        }
+
+        $dateTime = new DateTime('@'.$timestamp);
         $dateTime->setTimezone(static::timeZone());
         return static::instance($dateTime);
     }
 
+    /**
+     * @throws Exception
+     */
     public static function createFromJson(string $json) : DateTimeImmutable
     {
-        preg_match('/([0-9]+)\+/', $json, $matches);
+        preg_match('/(\d+)\+/', $json, $matches);
         if (!isset($matches[1])) {
-            throw new \InvalidArgumentException('$json is not a valid JSON date. Input: ' . $json);
+            throw new InvalidArgumentException('$json is not a valid JSON date. Input: ' . $json);
         }
 
         // remove the last three digits since the json date is given in milliseconds
